@@ -18,11 +18,9 @@ config = ConfigParser()
 config.read(lang_folder, encoding="utf-8")
 
 def get_translation(key):
-    """Lấy bản dịch từ file ngôn ngữ"""
     return config.get("ui", key, fallback=key)
 
 def display_help():
-    """Hiển thị hướng dẫn sử dụng"""
     print(f"\n{get_translation('help_title')}")
     print(f"{get_translation('help_option_1')}")
     print(f"{get_translation('help_option_1_detail')}")
@@ -36,7 +34,6 @@ def display_help():
     print("-" * 50)
 
 def run():
-    """Chương trình chính"""
     while True:
         print(f"\n{get_translation('menu_title')}")
         print(f"{get_translation('menu_option_1')}")

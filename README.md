@@ -281,6 +281,219 @@ sudo apt-get install python3-tk
 
 ---
 
+##  📖 Code Explanation
+### **1. Language Support Setup**
+
+#### **Language Configuration File Path**
+```python
+lang_path = os.path.join(os.getcwd(), "language.ini")
+config = configparser.ConfigParser()
+config.read(lang_path)
+```
+
+- **`os.path.join(os.getcwd(), "language.ini")`**:
+  - Combines the current working directory (`os.getcwd()`) with the `language.ini` file name to form the complete path to the language configuration file.
+  - This file determines the default language used in the program.
+  
+- **`configparser.ConfigParser()`**:
+  - A Python module used to read and parse `.ini` configuration files.
+  
+- **`config.read(lang_path)`**:
+  - Loads the `language.ini` file into the `config` object for further processing.
+
+#### **Load Default Language**
+```python
+default_language = config.get("language", "default", fallback="en")
+lang_folder = os.path.join(os.getcwd(), "lang", f"{default_language}.ini")
+```
+
+- **`config.get("language", "default", fallback="en")`**:
+  - Fetches the default language specified in the `[language]` section under the `default` key of `language.ini`.
+  - If the key or section is missing, it defaults to `"en"` (English).
+
+- **`os.path.join(os.getcwd(), "lang", f"{default_language}.ini")`**:
+  - Forms the path to the corresponding language file (e.g., `lang/en.ini` for English or `lang/vi.ini` for Vietnamese).
+
+#### **Read Language File**
+```python
+lang_config = configparser.ConfigParser()
+lang_config.read(lang_folder, encoding="utf-8")
+```
+
+- **`lang_config.read(lang_folder, encoding="utf-8")`**:
+  - Loads the specific language `.ini` file (e.g., `en.ini`) and makes its translations available for the program.
+  - UTF-8 encoding ensures support for special characters in translations.
+
+---
+
+### **2. Translation Function**
+
+```python
+def get_translation(key, fallback="", section="ui"):
+    return lang_config.get(section, key, fallback=fallback)
+```
+
+- **Purpose**:
+  - Retrieves a translated string from the language file.
+
+- **Parameters**:
+  - `key`: The specific text key to be translated (e.g., `help_title`).
+  - `fallback`: A default value to use if the key is missing from the language file.
+  - `section`: The section in the `.ini` file where the key resides (e.g., `ui` for user interface strings).
+
+- **`lang_config.get()`**:
+  - Looks up the `key` in the specified `section` of the loaded language file.
+  - If the key is not found, the `fallback` value is returned.
+
+---
+
+### **3. `FileTimestampUpdater` Class**
+
+This class handles the core functionality of updating file timestamps based on their filenames.
+
+#### **Initialization**
+```python
+class FileTimestampUpdater:
+    def __init__(self):
+        self.project_dir = os.getcwd()
+        self.log_directory = os.path.join(self.project_dir, "Logs")
+        self.success_log_path = os.path.join(self.log_directory, "success.log")
+        self.error_log_path = os.path.join(self.log_directory, "error.log")
+        os.makedirs(self.log_directory, exist_ok=True)
+```
+
+- **Attributes**:
+  - `self.project_dir`: The base directory of the project, obtained using `os.getcwd()`.
+  - `self.log_directory`: Path to the directory where log files will be stored (`Logs`).
+  - `self.success_log_path`: File path for storing successful operations (`Logs/success.log`).
+  - `self.error_log_path`: File path for logging errors (`Logs/error.log`).
+
+- **`os.makedirs(self.log_directory, exist_ok=True)`**:
+  - Ensures the `Logs` directory exists. If it doesn’t, it creates it.
+
+---
+
+#### **Logging Messages**
+```python
+def log_message(self, message_key, log_file, **kwargs):
+    message_template = get_translation(message_key, fallback=message_key)
+    message = message_template.format(**kwargs)
+    with open(log_file, "a", encoding="utf-8") as log:
+        log.write(f"{datetime.now()} - {message}\n")
+```
+
+- **Purpose**:
+  - Writes log messages for both successful and failed operations.
+
+- **Parameters**:
+  - `message_key`: Key for the translated log message.
+  - `log_file`: The specific log file to write to (e.g., `success.log` or `error.log`).
+  - `kwargs`: Dynamic arguments to format the log message (e.g., `{filename}`, `{datetime}`).
+
+- **Process**:
+  - Retrieves the translation template using `get_translation()`.
+  - Formats the template with the provided arguments.
+  - Writes the formatted message to the specified log file with a timestamp.
+
+---
+
+#### **Extract Timestamp from Filename**
+```python
+def extract_datetime_from_filename(self, filename):
+    patterns = [
+        r".*?(\d{4})(\d{2})(\d{2})[_-](\d{2})(\d{2})(\d{2})",
+        r".*?(\d{4})(\d{2})(\d{2})[_-](\d{2})(\d{2})",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, os.path.splitext(filename)[0])
+        if match:
+            groups = match.groups()
+            if len(groups) == 6:
+                year, month, day, hour, minute, second = map(int, groups)
+            elif len(groups) == 5:
+                year, month, day, hour, minute = map(int, groups)
+                second = 0
+            return datetime(year, month, day, hour, minute, second)
+    return None
+```
+
+- **Purpose**:
+  - Extracts a valid timestamp from the filename using regular expressions.
+
+- **Key Points**:
+  - `patterns`: A list of regex patterns to match common timestamp formats.
+  - `os.path.splitext(filename)[0]`: Strips the file extension, leaving only the base name for matching.
+  - `datetime(year, month, day, hour, minute, second)`: Constructs a `datetime` object from the extracted values.
+
+- **Supported Patterns**:
+  - `YYYYMMDD_HHMMSS` (e.g., `20230811_154500`)
+  - `YYYYMMDD_HHMM` (e.g., `20230811_1545`)
+
+---
+
+#### **Update File Timestamps**
+```python
+def update_file_timestamps(self, directory):
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
+        new_datetime = self.extract_datetime_from_filename(filename)
+        if new_datetime:
+            new_timestamp = time.mktime(new_datetime.timetuple())
+            os.utime(file_path, (new_timestamp, new_timestamp))
+            # Win32 creation time update
+            try:
+                file_handle = win32file.CreateFile(...)
+                win32file.SetFileTime(file_handle, pywintypes.Time(new_datetime), None, None)
+                file_handle.Close()
+                self.log_message("success_update", self.success_log_path, filename=filename, datetime=new_datetime)
+            except Exception as e:
+                self.log_message("error_update", self.error_log_path, filename=filename, error=e)
+        else:
+            self.log_message("invalid_file", self.error_log_path, filename=filename)
+```
+
+- **Purpose**:
+  - Updates the creation and modification timestamps of files.
+
+- **Process**:
+  - Extracts the timestamp from the filename using `extract_datetime_from_filename`.
+  - Updates the modification time using `os.utime`.
+  - Uses `win32file.SetFileTime` to update the creation time on Windows systems.
+  - Logs success or failure for each file.
+
+---
+
+### **4. GUI for Manual Timestamp Updates**
+
+#### **Open GUI**
+```python
+def open_gui():
+    ...
+    calendar = Calendar(root, date_pattern="yyyy-mm-dd")
+    ...
+    apply_changes()
+```
+
+- **Purpose**:
+  - Allows users to manually select a date and time for updating file timestamps via a graphical interface.
+
+- **Key Components**:
+  - `Calendar`: A widget for selecting dates.
+  - `Spinbox`: Inputs for hours, minutes, and seconds.
+
+#### **Apply Changes**
+```python
+def apply_changes():
+    ...
+    user_datetime = datetime(year, month, day, hour, minute, second)
+    modifier.process_timestamp_updates(folder_path.get(), user_datetime)
+```
+
+- **Purpose**:
+  - Collects user input and updates the timestamps for all files in the selected folder.
+
+---
+
 ## 📄 License
 ```text
 MIT License
