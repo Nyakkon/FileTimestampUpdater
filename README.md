@@ -37,6 +37,22 @@ Execute the script using:
 python main.py
 ```
 
+## 📂 Project Folder Structure
+```text
+/Project
+    main.py            # Entry point of the application
+    language.ini       # Configuration file for selecting language
+    /modules           # Contains core modules
+        date_modifier.py    # Module to handle timestamp modification
+        edit_date.py        # Module to extract and validate timestamps
+    /lang
+        en.ini         # English localization strings
+        vi.ini         # Vietnamese localization strings
+    /Logs
+        success.log    # Logs of successfully processed files
+        error.log      # Logs of files that encountered errors
+```
+
 ---
 
 ## 📝 How It Works
