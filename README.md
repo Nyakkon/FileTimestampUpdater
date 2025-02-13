@@ -324,8 +324,6 @@ lang_config.read(lang_folder, encoding="utf-8")
   - Loads the specific language `.ini` file (e.g., `en.ini`) and makes its translations available for the program.
   - UTF-8 encoding ensures support for special characters in translations.
 
----
-
 ### **2. Translation Function**
 
 ```python
@@ -345,7 +343,6 @@ def get_translation(key, fallback="", section="ui"):
   - Looks up the `key` in the specified `section` of the loaded language file.
   - If the key is not found, the `fallback` value is returned.
 
----
 
 ### **3. `FileTimestampUpdater` Class**
 
@@ -371,7 +368,6 @@ class FileTimestampUpdater:
 - **`os.makedirs(self.log_directory, exist_ok=True)`**:
   - Ensures the `Logs` directory exists. If it doesn’t, it creates it.
 
----
 
 #### **Logging Messages**
 ```python
@@ -394,8 +390,6 @@ def log_message(self, message_key, log_file, **kwargs):
   - Retrieves the translation template using `get_translation()`.
   - Formats the template with the provided arguments.
   - Writes the formatted message to the specified log file with a timestamp.
-
----
 
 #### **Extract Timestamp from Filename**
 ```python
@@ -429,8 +423,6 @@ def extract_datetime_from_filename(self, filename):
   - `YYYYMMDD_HHMMSS` (e.g., `20230811_154500`)
   - `YYYYMMDD_HHMM` (e.g., `20230811_1545`)
 
----
-
 #### **Update File Timestamps**
 ```python
 def update_file_timestamps(self, directory):
@@ -460,8 +452,6 @@ def update_file_timestamps(self, directory):
   - Updates the modification time using `os.utime`.
   - Uses `win32file.SetFileTime` to update the creation time on Windows systems.
   - Logs success or failure for each file.
-
----
 
 ### **4. GUI for Manual Timestamp Updates**
 
