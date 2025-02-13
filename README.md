@@ -80,6 +80,16 @@ To add a new language:
         other...       # Add your language
 ```
 2. Create a new `.ini` file named after the language code (e.g., `es.ini` for Spanish).
+```text
+/Project
+    main.py            # Entry point of the application
+    language.ini       # Configuration file for selecting language
+    /lang
+        en.ini         # English localization strings
+        vi.ini         # Vietnamese localization strings
+        es.ini         # e.g., `es.ini` for Spanish
+```
+
 3. Add the translated key-value pairs. Example structure:
    ```ini
    [ui]
