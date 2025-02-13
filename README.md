@@ -270,6 +270,195 @@ If running on Linux and `tkinter` is missing, install it using:
 ```sh
 sudo apt-get install python3-tk
 ```
+---
+### ✅ **Advanced Test Cases**
+
+#### **Test Environment**
+- **Operating System**: Windows 10
+- **Python Version**: 3.10
+- **Dependencies**: `pywin32`, `tkinter`, `tkcalendar`
+- **Setup**: Ensure all dependencies are installed, and test files are placed in a dedicated folder.
+
+
+
+#### **Test Case 1: Valid Filename with Full Timestamp**
+**Filename**: `photo_20250215_143520.jpg`  
+**Expected Result**:  
+- Creation and modification timestamps are updated to **February 15, 2025, 14:35:20**.
+- A success log entry is recorded:  
+  `2025-02-15 14:35:20 - Success: photo_20250215_143520.jpg -> 2025-02-15 14:35:20`.
+
+**Actual Result**: ✅ Success.  
+**Log**:
+```text
+[SUCCESS]: photo_20250215_143520.jpg -> 2025-02-15 14:35:20
+```
+
+#### **Test Case 2: Valid Filename with Partial Timestamp**
+**Filename**: `document_20250215_1435.pdf`  
+**Expected Result**:  
+- Creation and modification timestamps are updated to **February 15, 2025, 14:35:00** (default seconds to `00`).
+- A success log entry is recorded:  
+  `2025-02-15 14:35:00 - Success: document_20250215_1435.pdf -> 2025-02-15 14:35:00`.
+
+**Actual Result**: ✅ Success.  
+**Log**:
+```text
+[SUCCESS]: document_20250215_1435.pdf -> 2025-02-15 14:35:00
+```
+
+#### **Test Case 3: Filename Without Timestamp**
+**Filename**: `random_file.txt`  
+**Expected Result**:  
+- File is skipped.
+- An error log entry is recorded:  
+  `2025-02-15 14:36:00 - Invalid file: random_file.txt`.
+
+**Actual Result**: ✅ Skipped.  
+**Log**:
+```text
+[ERROR]: Invalid file: random_file.txt
+```
+
+
+
+#### **Test Case 4: Invalid Timestamp Format**
+**Filename**: `invalid_202502_15_1435.txt`  
+**Expected Result**:  
+- File is skipped due to unrecognized timestamp format.
+- An error log entry is recorded:  
+  `2025-02-15 14:36:30 - Invalid file: invalid_202502_15_1435.txt`.
+
+**Actual Result**: ✅ Skipped.  
+**Log**:
+```text
+[ERROR]: Invalid file: invalid_202502_15_1435.txt
+```
+
+
+
+#### **Test Case 5: Valid Timestamp with Additional Characters**
+**Filename**: `photo_20250215_143520_extra.jpg`  
+**Expected Result**:  
+- The valid timestamp (`20250215_143520`) is extracted, and the creation/modification timestamps are updated to **February 15, 2025, 14:35:20**.
+- A success log entry is recorded:  
+  `2025-02-15 14:37:00 - Success: photo_20250215_143520_extra.jpg -> 2025-02-15 14:35:20`.
+
+**Actual Result**: ✅ Success.  
+**Log**:
+```text
+[SUCCESS]: photo_20250215_143520_extra.jpg -> 2025-02-15 14:35:20
+```
+
+
+
+#### **Test Case 6: Folder with Mixed File Types**
+**Folder Contents**:  
+- `photo_20250215_143520.jpg` (valid).  
+- `document_20250215.pdf` (invalid).  
+- `image_2025_02_15_143520.png` (invalid format).  
+
+**Expected Result**:  
+- Valid file is processed successfully.
+- Invalid files are logged as errors.
+
+**Actual Result**: ✅ Partial Success.  
+**Log**:
+```text
+[SUCCESS]: photo_20250215_143520.jpg -> 2025-02-15 14:35:20
+[ERROR]: Invalid file: document_20250215.pdf
+[ERROR]: Invalid file: image_2025_02_15_143520.png
+```
+
+
+
+#### **Test Case 7: GUI Timestamp Update**
+**Selected Folder**: `/path/to/files`  
+**User-Selected Date and Time**: **February 20, 2025, 10:45:30**  
+**Folder Contents**:  
+- `file1.txt`.  
+- `file2.jpg`.  
+
+**Expected Result**:  
+- All files in the folder are updated to the user-selected timestamp.
+- Success logs are recorded for each file.
+
+**Actual Result**: ✅ Success.  
+**Log**:
+```text
+[SUCCESS]: file1.txt -> 2025-02-20 10:45:30
+[SUCCESS]: file2.jpg -> 2025-02-20 10:45:30
+```
+
+
+
+#### **Test Case 8: Permission Denied Error**
+**Filename**: `protected_file.txt` (read-only file).  
+**Expected Result**:  
+- File is skipped with an error logged:  
+  `2025-02-15 14:38:00 - Error updating protected_file.txt: [Permission Denied]`.
+
+**Actual Result**: ❌ Failed.  
+**Log**:
+```text
+[ERROR]: Failed to update Creation Date for protected_file.txt: [Permission Denied]
+```
+
+
+
+#### **Test Case 9: Long Filename Edge Case**
+**Filename**: `very_long_filename_20250215_143520_some_more_characters_and_more_text.jpg`.  
+**Expected Result**:  
+- Timestamp (`20250215_143520`) is extracted and used.
+- A success log entry is recorded.
+
+**Actual Result**: ✅ Success.  
+**Log**:
+```text
+[SUCCESS]: very_long_filename_20250215_143520_some_more_characters_and_more_text.jpg -> 2025-02-15 14:35:20
+```
+
+
+
+#### **Test Case 10: File Without Read/Write Permissions**
+**Filename**: `no_permissions_file.jpg`.  
+**Expected Result**:  
+- File processing fails with a detailed error logged:  
+  `2025-02-15 14:39:00 - Error updating no_permissions_file.jpg: [Access Denied]`.
+
+**Actual Result**: ❌ Failed.  
+**Log**:
+```text
+[ERROR]: Error updating Creation Date for no_permissions_file.jpg: [Access Denied]
+```
+
+
+
+#### **Test Case 11: Files with Duplicates**
+**Folder Contents**:  
+- `file_20250215_143520.jpg`.  
+- `file_20250215_143520(1).jpg`.  
+
+**Expected Result**:  
+- Both files are processed separately with the same timestamp.
+- Success logs are recorded for each file.
+
+**Actual Result**: ✅ Success.  
+**Log**:
+```text
+[SUCCESS]: file_20250215_143520.jpg -> 2025-02-15 14:35:20
+[SUCCESS]: file_20250215_143520(1).jpg -> 2025-02-15 14:35:20
+```
+
+
+
+### **Logging Summary**
+Each test case writes logs to either:
+1. **`Logs/success.log`**:
+   - Contains entries for successfully updated files.
+2. **`Logs/error.log`**:
+   - Tracks errors and skipped files with detailed messages.
+
 
 ---
 
