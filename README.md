@@ -87,7 +87,7 @@ To add a new language:
     /lang
         en.ini         # English localization strings
         vi.ini         # Vietnamese localization strings
-        es.ini         # e.g., `es.ini` for Spanish
+        es.ini         # e.g., "es.ini" for Spanish
 ```
 
 3. Add the translated key-value pairs. Example structure:
