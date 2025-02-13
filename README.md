@@ -42,7 +42,7 @@ python main.py
 /Project
     main.py            # Entry point of the application
     language.ini       # Configuration file for selecting language
-    /modules           # Contains core modules
+    /Modules           # Contains core modules
         date_modifier.py    # Module to handle timestamp modification
         edit_date.py        # Module to extract and validate timestamps
     /lang
