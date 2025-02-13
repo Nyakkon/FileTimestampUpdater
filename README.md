@@ -55,6 +55,96 @@ python main.py
 
 ---
 
+### 🌐 How to Use Language Support
+
+This project supports multiple languages for the user interface via the `language.ini` configuration file.
+
+#### **Default Language Configuration**
+The default language is specified in the `language.ini` file:
+```ini
+[default]
+language = en
+```
+To change the language, edit the `language` field and specify the desired language code (e.g., `vi` for Vietnamese).
+
+#### **Adding a New Language**
+To add a new language:
+1. Navigate to the `/lang` directory.
+2. Create a new `.ini` file named after the language code (e.g., `es.ini` for Spanish).
+3. Add the translated key-value pairs. Example structure:
+   ```ini
+   [ui]
+   help_title = Instrucciones de uso:
+   help_option_1 = 1. Actualizar marcas de tiempo desde nombres de archivo:
+   help_option_1_detail = - Seleccione la opción 1 si desea actualizar la fecha y la hora (creación y modificación) según el formato del nombre del archivo.
+   help_option_2 = 2. Actualizar marcas de tiempo a través de la interfaz:
+   help_option_2_detail = - Seleccione la opción 2 para ingresar manualmente las fechas y horas.
+   ...
+   ```
+
+4. Update the `language.ini` file with the new language code:
+   ```ini
+   [default]
+   language = es
+   ```
+
+#### **Switching Languages at Runtime**
+The program automatically loads the selected language at runtime. If no language file is found, it defaults to English.
+
+#### **Example of the Current Language Configuration**
+Below is the default content of the English (`en.ini`) file:
+```ini
+[ui]
+help_title = Usage Instructions:
+help_option_1 = 1. Update timestamps from file names:
+help_option_1_detail = - Select option 1 if you want to update the date and time (created and modified) based on the file name format (e.g., file_20230811_154500.txt).
+help_option_1_folder = - You need to select the folder containing the files to process.
+help_option_2 = 2. Update timestamps via the interface:
+help_option_2_detail = - Select option 2 if you want to update the date and time by manually entering them through a graphical interface.
+help_option_2_ui = - The interface will display a calendar and a clock for selecting the date and time.
+help_option_3 = 3. Exit the program:
+help_option_3_detail = - Select option 3 to exit the program.
+help_note = Note: Successfully processed or failed files will be logged in the Logs folder.
+menu_title = Select an option:
+menu_option_1 = 1. Update timestamps from file names (file.extension)
+menu_option_2 = 2. Update timestamps via the interface (select date and time)
+menu_option_3 = 3. Usage instructions
+menu_option_4 = 4. Exit the program
+invalid_choice = Invalid choice. Please try again.
+exit_message = Exiting the program. Goodbye!
+title = Update Timestamps
+select_date = Select Date:
+select_hour = Select Time:
+select_folder = Select Folder:
+apply_changes = Apply
+browse_folder = Browse Folder
+completion_title = Completed
+completion_message = Timestamps updated for files in {folder}.
+error_title = Error
+error_no_folder = No folder selected!
+error_generic = An error occurred: {error}
+success_message = Success: {filename} -> {timestamp}
+error_message = Error updating {filename}: {error}
+hours = Hours
+minutes = Minutes
+seconds = Seconds
+error_file = Error {filename}: {error}
+success_update = Success: {filename} -> {datetime}
+error_update = Error updating Creation Date for {filename}: {error}
+invalid_file = Invalid file: {filename}
+success_print = [SUCCESS]: {filename} -> {datetime}
+error_print = [ERROR]: Failed to update Creation Date for {filename}: {error}
+invalid_print = [ERROR]: Invalid file: {filename}
+folder_selected = Selected folder: {folder}
+no_folder = No folder selected.
+process_result = \n--- Processing Results ---
+folder_select = Select a folder to process
+```
+With these steps, you can add or modify language configurations for your project.
+
+
+---
+
 ## 📝 How It Works
 ### 📂 1. Select a Directory
 - When the script runs, a file dialog will appear, allowing you to select a folder.
