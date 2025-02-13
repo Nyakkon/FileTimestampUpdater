@@ -1,12 +1,12 @@
 # 📌 File Timestamp Updater
 
-🚀 **Version:** 1.0  
+🚀 **Version:** 1.0.1  
 📧 **Contact:** [miko@wibu.me](mailto:miko@wibu.me)
 
 ---
 
 ## 📖 Overview
-This script updates file timestamps based on their filenames, using specific date-time formats. It is particularly useful when organizing files by their creation or modification dates.
+This script updates file timestamps based on their filenames, using specific date-time formats. It is particularly useful for organizing files by their creation or modification dates.
 
 ---
 
@@ -27,8 +27,9 @@ python3 --version
 ### 🔹 2. Install Required Dependencies
 This script relies on the `pywintypes` and `win32file` libraries, which are part of `pywin32`. Install them using:
 ```sh
-pip install pywin32
+pip install -r requirements.txt
 ```
+(Note: Ensure you have `requirements.txt` in the project directory with `pywin32` listed.)
 
 ### 🔹 3. Run the Script
 Execute the script using:
@@ -50,32 +51,88 @@ The script recognizes several date-time patterns in filenames:
 - `YYYY_MM_DD_HH_MM_SS` (e.g., `2025_03_02_11_03_20`)
 - `YYYY_MM_DD_HH_MM` (e.g., `2025_03_02_11_03`)
 
-If a filename contains one of these formats, the extracted date-time is used to update the file's timestamps.
+The `edit_date.py` module plays a key role in:
+- **Accurate Pattern Matching:** Validating and extracting timestamps.
+- **Error Logging:** Handling invalid or malformed filenames gracefully.
+- **Edge Case Management:** Skipping files with incomplete timestamps.
 
 ### ⏳ 3. Update File Timestamps
 - The script modifies the **last modified time** and **creation time** of each file based on the extracted timestamp.
-- It logs successful updates and errors in `Logs/success.log` and `Logs/error.log`.
+- Logs for both successes and errors are saved in `Logs/success.log` and `Logs/error.log`.
 
 ---
 
-## ✅ Naming Files Correctly
-To ensure the script works properly, rename files to include a timestamp in the following format:
-✅ **Correct:** `photo_20250302_110320.jpg`  
-✅ **Correct:** `document_20250302_1103.pdf`  
-❌ **Incorrect:** `photo_110320.jpg` (missing full date)  
-❌ **Incorrect:** `document_2025-03-02.pdf` (missing time information)  
+## 🔍 Detailed Report
+### **Changelog**
+**Version 1.0.1 Updates:**
+- Enhanced `edit_date.py` for better timestamp validation and logging.
+- Added support for multilingual interface (English and Vietnamese).
+- Improved logging format to include more context, such as file paths and error descriptions.
+- Refactored code for better efficiency and modularity.
+- Updated GUI responsiveness and user feedback.
+
+### **File Structure**
+- **`main.py`**: Entry point of the script.
+- **`Modules/`**: Contains core logic.
+  - `date_modifier.py`: Handles timestamp modification.
+  - `edit_date.py`: Extracts and validates timestamps from filenames.
+- **`lang/`**: Localization files.
+  - `en.ini`: English strings.
+  - `vi.ini`: Vietnamese strings.
+- **`language.ini`**: Configuration file for selecting the language.
+
+### **Known Limitations**
+- Only supports filenames with specific timestamp patterns.
+- Requires Python to be installed on the system.
+
+---
+
+## ✅ Test Cases
+### **Test Environment**
+- OS: Windows 10
+- Python Version: 3.10
+- Dependencies: pywin32 (latest version)
+
+### **Test Scenarios**
+#### Test Case 1: Valid Timestamp in Filename
+**Filename:** `photo_20250302_110320.jpg`  
+**Expected Result:** Timestamps updated to 2025-03-02 11:03:20.  
+**Actual Result:** ✅ Success
+
+#### Test Case 2: Invalid Timestamp in Filename
+**Filename:** `photo_invalid.jpg`  
+**Expected Result:** File skipped with an error logged.  
+**Actual Result:** ✅ Success, logged in `Logs/error.log`.
+
+#### Test Case 3: Edge Case - Incomplete Timestamp
+**Filename:** `photo_2025_03.jpg`  
+**Expected Result:** File skipped due to invalid format.  
+**Actual Result:** ✅ Success, logged in `Logs/error.log`.
+
+#### Test Case 4: Multilingual Interface
+**Configuration:** Set `language.ini` to `vi`.  
+**Expected Result:** Vietnamese UI strings displayed.  
+**Actual Result:** ✅ Success
+
+#### Test Case 5: Directory with Mixed Files
+**Directory Contents:**  
+- `photo_20250302_110320.jpg` (valid)  
+- `document_invalid.pdf` (invalid)  
+
+**Expected Result:** Valid file processed; invalid file logged.  
+**Actual Result:** ✅ Success with detailed logs.
 
 ---
 
 ## 📜 Logging
-- **✅ Success Log (`Logs/success.log`)**: Records files that were successfully updated.
-- **❌ Error Log (`Logs/error.log`)**: Logs files that failed to be processed, including error details.
+- **✅ Success Log (`Logs/success.log`)**: Contains details of successfully processed files.
+- **❌ Error Log (`Logs/error.log`)**: Records errors, including file paths and reasons for failure.
 
 ---
 
 ## 🛠 Troubleshooting
 ### ❓ No Changes to Timestamps?
-Ensure filenames contain a valid date-time pattern. If the script does not find a match, the file is skipped.
+Ensure filenames contain valid date-time patterns. Files without valid patterns are skipped.
 
 ### ❓ ImportError: No module named 'pywintypes'
 Run:
@@ -92,9 +149,10 @@ sudo apt-get install python3-tk
 ---
 
 ## 🔮 Future Enhancements
-- Support for additional date formats.
-- CLI options for batch processing without GUI.
-- Cross-platform compatibility.
+- Support additional date formats.
+- Add CLI options for non-GUI batch processing.
+- Enhance cross-platform compatibility.
+- Integrate with cloud storage solutions.
 
 ---
 

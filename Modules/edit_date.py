@@ -8,29 +8,21 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from tkcalendar import Calendar
 
-# Đường dẫn thư mục gốc (chứa language.ini và thư mục lang)
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# Đường dẫn tới file `language.ini`
 lang_path = os.path.join(base_dir, "language.ini")
 if not os.path.exists(lang_path):
     raise FileNotFoundError(f"Không tìm thấy file cấu hình ngôn ngữ: {lang_path}")
-
-# Đọc file `language.ini` với mã hóa UTF-8
 config = configparser.ConfigParser()
 with open(lang_path, 'r', encoding='utf-8') as f:
     config.read_file(f)
 
-# Lấy ngôn ngữ mặc định hoặc đặt 'en' nếu không tồn tại
 default_language = config.get('language', 'default', fallback='en')
 
-# Đường dẫn tới file ngôn ngữ
 lang_folder = os.path.join(base_dir, "lang")
 lang_file_path = os.path.join(lang_folder, f"{default_language}.ini")
 if not os.path.exists(lang_file_path):
     raise FileNotFoundError(f"Không tìm thấy file ngôn ngữ: {lang_file_path}")
 
-# Đọc file ngôn ngữ với mã hóa UTF-8
 lang_config = configparser.ConfigParser()
 with open(lang_file_path, 'r', encoding='utf-8') as f:
     lang_config.read_file(f)
@@ -38,7 +30,6 @@ with open(lang_file_path, 'r', encoding='utf-8') as f:
 def get_translation(section, key, fallback=""):
     return lang_config.get(section, key, fallback=fallback)
 
-# Lớp chính
 class FileTimestampModifier:
     def __init__(self, project_dir=None):
         self.project_dir = project_dir or os.getcwd()
@@ -84,7 +75,6 @@ class FileTimestampModifier:
             messagebox.showerror(get_translation("ui", "error_title", fallback="Error"),
                                  error_no_folder_message)
 
-# Giao diện
 def open_gui():
     def browse_folder():
         folder_path.set(filedialog.askdirectory())
