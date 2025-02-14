@@ -56,7 +56,7 @@ def run():
             print(get_translation(config, "menu_option_1"))
             updater = FileTimestampUpdater()
             updater.select_folder()
-            input(get_translation(config, "\n"+"enter_for_exit"))
+            input("\n" + get_translation(config, "enter_for_exit"))
 
         elif choice == "2":
             print(get_translation(config, "menu_option_2"))
@@ -64,7 +64,7 @@ def run():
 
         elif choice == "3":
             display_help(config)
-            input(get_translation(config, "\n"+"enter_for_exit"))
+            input("\n" + get_translation(config, "enter_for_exit"))
 
         elif choice == "4":
             print(get_translation(config, "exit_message"))

@@ -158,7 +158,7 @@ folder_selected = Selected folder: {folder}
 no_folder = No folder selected.
 process_result = --- Processing Results ---
 folder_select = Select a folder to process
-enter_for_exit = Press Enter to return to the main menu.
+enter_for_exit = Press Enter to return to the main menu: 
 ```
 With these steps, you can add or modify language configurations for your project.
 
