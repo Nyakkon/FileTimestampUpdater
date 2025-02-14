@@ -7,15 +7,24 @@ import pywintypes
 import win32file
 from tkinter import filedialog, Tk
 
-lang_path = os.path.join(os.getcwd(), "language.ini")
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+lang_path = os.path.join(base_dir, "language.ini")
+if not os.path.exists(lang_path):
+    raise FileNotFoundError(f"Không tìm thấy file cấu hình ngôn ngữ: {lang_path}")
 config = configparser.ConfigParser()
-config.read(lang_path)
+with open(lang_path, 'r', encoding='utf-8') as f:
+    config.read_file(f)
 
-default_language = config.get("language", "default", fallback="en")
-lang_folder = os.path.join(os.getcwd(), "config", "lang", f"{default_language}.ini")
+default_language = config.get('language', 'default', fallback='en')
+
+lang_folder = os.path.join(base_dir, "lang")
+lang_file_path = os.path.join(lang_folder, f"{default_language}.ini")
+if not os.path.exists(lang_file_path):
+    raise FileNotFoundError(f"Không tìm thấy file ngôn ngữ: {lang_file_path}")
 
 lang_config = configparser.ConfigParser()
-lang_config.read(lang_folder, encoding="utf-8")
+with open(lang_file_path, 'r', encoding='utf-8') as f:
+    lang_config.read_file(f)
 
 def get_translation(key, fallback="", section="ui"):
     return lang_config.get(section, key, fallback=fallback)
@@ -80,7 +89,7 @@ class FileTimestampUpdater:
                         self.log_message("error_update", self.error_log_path, filename=filename, error=e)
                         print(get_translation("error_print").format(filename=filename, error=e))
                 else:
-                    self.log_message("invalid_file", self.error_log_path, filename=filename)
+                    self.log_message("\n"+"invalid_file", self.error_log_path, filename=filename)
                     print(get_translation("invalid_print").format(filename=filename))
 
     def select_folder(self):
